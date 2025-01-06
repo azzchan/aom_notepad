@@ -80,3 +80,14 @@
 - Se añade un endpoint para actualizar en tiempo real las estadisticas de creacion de eventos.
 - Se agrego un archivo JSON donde se alamcena los datos de estadistica.
 
+## v0.2.6
+- Cambio de nombre del archivo API a google_sheet_api
+- Actualizada la página de eventos internos y públicos para una mejor comprensión.
+- Refactorizado get_event_public y get_event_internal para una mejor comprensión.
+- Añadida función de validación de datos en get_event_public y get_event_internal.
+- Añadidas múltiples opciones de DLC en la página de eventos internos.
+- Corregido el problema con la búsqueda con el número de conductor o TMP ID.
+- Refactorizada la función google_sheet_api.
+- Añadida nueva cabecera en la función google_sheet_api.
+- Eliminada la función get_member_info.
+- La función de estadísticas y blog ya no está disponible hasta que encontremos una forma mejor de actualizar los archivos en tiempo real.
