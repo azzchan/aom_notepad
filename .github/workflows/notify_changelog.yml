@@ -24,15 +24,10 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d '{
-                 "username": "GitHub",
-                 "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-                 "embeds": [{
-                   "title": "🚀 Nueva versión detectada en el Changelog",
-                   "description": "${{ env.LATEST_CHANGELOG }}",
-                   "color": 65280
-                 }]
-               }' \
-               $DISCORD_WEBHOOK
+            JSON_PAYLOAD=$(jq -n --arg content "**🚀 Nueva versión detectada en el Changelog**\n\n${{ env.LATEST_CHANGELOG }}" \
+            '{ "username": "GitHub", "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", "content": $content }')
+
+            curl -H "Content-Type: application/json" \
+                -X POST \
+                -d "$JSON_PAYLOAD" \
+                $DISCORD_WEBHOOK
