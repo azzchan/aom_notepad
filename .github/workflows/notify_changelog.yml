@@ -1,0 +1,38 @@
+name: Notify Discord on Changelog Update
+on:
+  push:
+    paths:
+      - 'README.md'  # Detecta cambios en README.md
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract latest changelog entry
+        id: changelog
+        run: |
+          # Buscar la última versión en el README (suponiendo que las versiones empiezan con '## v')
+          LATEST_CHANGELOG=$(awk '/^## v/{if (x) exit; x=1} x' README.md)
+          echo "LATEST_CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$LATEST_CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send message to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{
+                 "username": "GitHub",
+                 "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                 "embeds": [{
+                   "title": "🚀 Nueva versión detectada en el Changelog",
+                   "description": "${{ env.LATEST_CHANGELOG }}",
+                   "color": 65280
+                 }]
+               }' \
+               $DISCORD_WEBHOOK
