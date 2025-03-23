@@ -115,4 +115,5 @@
 - Mejorada la distribucion de los sistemas dispoinbles en el dashboard.
 - Añadida inicialicacion del sistema 'AndesID'.
 - Mejoramiento en la seguridad, ahora para poder ingresar a los diferentes endpoints debe estar logeado previamente.
-- Añadido sistema de Estadistica/PowerBi
+- Añadido sistema de Estadistica/PowerBi.
+- Test
