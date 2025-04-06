@@ -1,33 +1,36 @@
-name: Notify Discord on Changelog Update
+name: Notificar nueva versión a Discord
+
 on:
-  push:
-    paths:
-      - 'changelog.md'  # Detecta cambios en README.md
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Número de versión (ej: v1.2.3)'
+        required: true
+      changelog:
+        description: 'Cambios de la nueva versión (puede ser en Markdown)'
+        required: true
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Extract latest changelog entry
-        id: changelog
+      - name: Construir mensaje
+        id: message
         run: |
-          # Buscar la última versión en el README (suponiendo que las versiones empiezan con '## v')
-          LATEST_CHANGELOG=$(grep -Pzo '(?s)## v[0-9]+\.[0-9]+\.[0-9]+.*?(?=\n## v[0-9]+\.[0-9]+\.[0-9]+|\z)' changelog.md | head -n 1)
-          echo "LATEST_CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo "$LATEST_CHANGELOG" >> $GITHUB_ENV
+          echo "MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "**🚀 Nueva versión: ${{ github.event.inputs.version }}**" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "${{ github.event.inputs.changelog }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Send message to Discord
+      - name: Enviar a Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-            JSON_PAYLOAD=$(jq -n --arg content "**🚀 Nueva versión detectada en el Changelog**\n\n${{ env.LATEST_CHANGELOG }}" \
-            '{ "username": "GitHub", "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", "content": $content }')
+          JSON_PAYLOAD=$(jq -n --arg content "${MESSAGE}" \
+          '{ "username": "GitHub", "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", "content": $content }')
 
-            curl -H "Content-Type: application/json" \
-                -X POST \
-                -d "$JSON_PAYLOAD" \
-                $DISCORD_WEBHOOK
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$JSON_PAYLOAD" \
+               $DISCORD_WEBHOOK
