@@ -113,4 +113,3 @@
 - Añadida inicialicacion del sistema 'AndesID'.
 - Mejoramiento en la seguridad, ahora para poder ingresar a los diferentes endpoints debe estar logeado previamente.
 - Añadido sistema de Estadistica/PowerBi.
-- Test
