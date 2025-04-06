@@ -2,7 +2,7 @@ name: Notify Discord on Changelog Update
 on:
   push:
     paths:
-      - 'README.md'  # Detecta cambios en README.md
+      - 'changelog.md'  # Detecta cambios en README.md
 
 jobs:
   notify:
@@ -15,7 +15,7 @@ jobs:
         id: changelog
         run: |
           # Buscar la última versión en el README (suponiendo que las versiones empiezan con '## v')
-          LATEST_CHANGELOG=$(grep -Pzo '(?s)## v[0-9]+\.[0-9]+\.[0-9]+.*?(?=\n## v[0-9]+\.[0-9]+\.[0-9]+|\z)' README.md | head -n 1)
+          LATEST_CHANGELOG=$(grep -Pzo '(?s)## v[0-9]+\.[0-9]+\.[0-9]+.*?(?=\n## v[0-9]+\.[0-9]+\.[0-9]+|\z)' changelog.md | head -n 1)
           echo "LATEST_CHANGELOG<<EOF" >> $GITHUB_ENV
           echo "$LATEST_CHANGELOG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
