@@ -105,9 +105,6 @@
 - Añadida nueva cabecera en la función google_sheet_api.
 - Eliminada la función get_member_info.
 - La función de estadísticas y blog ya no está disponible hasta que encontremos una forma mejor de actualizar los archivos en tiempo real.
-
-## v0.3.0
-
 - Agregado diseño 4to aniversario de Los Andes.
 - Mejorado la forma de generar los eventos.
 - Mejoramiento en las descripcion de los sistemas.
