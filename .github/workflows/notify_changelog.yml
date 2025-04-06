@@ -4,31 +4,41 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Número de versión (ej: v1.2.3)'
+        description: 'Número de versión'
         required: true
       changelog:
-        description: 'Cambios de la nueva versión (puede ser en Markdown)'
+        description: 'Cambios de la nueva versión'
         required: true
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Construir mensaje
-        id: message
-        run: |
-          echo "MESSAGE<<EOF" >> $GITHUB_ENV
-          echo "**🚀 Nueva versión: ${{ github.event.inputs.version }}**" >> $GITHUB_ENV
-          echo "" >> $GITHUB_ENV
-          echo "${{ github.event.inputs.changelog }}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Enviar a Discord
+      - name: Enviar a Discord (con embed)
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: |
-          JSON_PAYLOAD=$(jq -n --arg content "${MESSAGE}" \
-          '{ "username": "GitHub", "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png", "content": $content }')
+          VERSION="${{ github.event.inputs.version }}"
+          CHANGELOG="${{ github.event.inputs.changelog }}"
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "🚀 Nueva versión: $VERSION" \
+            --arg description "$CHANGELOG" \
+            --arg timestamp "$(date --utc +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg color "3447003" \
+            '{ 
+              username: "GitHub",
+              avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+              embeds: [
+                {
+                  title: $title,
+                  description: $description,
+                  color: ($color | tonumber),
+                  timestamp: $timestamp,
+                  footer: { text: "Los Andes Unidos VTC" }
+                }
+              ]
+            }')
 
           curl -H "Content-Type: application/json" \
                -X POST \
